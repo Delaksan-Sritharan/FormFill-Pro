@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "FormFill Pro",
   "version": "1.0.0",
-  "description": "Smart form autofill with multiple profiles for competitions and event registrations",
+  "description": "Smart form autofill with multiple profiles for competitions and event registrations. Made for all SDGP students.",
   "permissions": ["storage", "activeTab", "scripting", "clipboardWrite"],
   "host_permissions": ["<all_urls>"],
   "action": {

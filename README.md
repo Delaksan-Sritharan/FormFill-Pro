@@ -1,5 +1,7 @@
 # FormFill Pro
 
+> Made for all SDGP students.
+
 A Chrome extension for quickly filling out competition and event registration forms using saved profiles. Store your personal details, team member info, and company/social links — then copy individual fields or autofill an entire form with one click.
 
 ---
