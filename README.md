@@ -146,3 +146,37 @@ FormFill_Pro/
 - Pure **HTML + CSS + JavaScript** — no frameworks, no build tools
 - `chrome.storage.sync` for cross-session persistence
 - `chrome.scripting` for dynamic content script injection fallback
+
+---
+
+## Roadmap
+
+Ideas for future improvements — contributions welcome:
+
+- **Import / Export profiles** — back up your data as JSON and share profiles with teammates
+- **Multiple personal profiles** — save and switch between different identities (e.g. different competitions or roles)
+- **Keyboard shortcut** — trigger autofill directly from the page without opening the popup
+- **Dark mode** — toggle between light and dark themes
+- **Chromium browser support** — package for Edge, Brave, and Arc (already MV3-compatible)
+- **Profile reset** — one-click option to clear all stored data
+- **Custom field aliases** — define your own keyword mappings for non-standard form labels
+
+---
+
+## Contributing
+
+FormFill Pro is open source and contributions are welcome.
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feat/your-feature`)
+3. Make your changes — no build step required, just edit the source files directly
+4. Load the folder as an unpacked extension to test (`chrome://extensions` → Load unpacked)
+5. Open a pull request with a clear description of what you changed and why
+
+Bug reports and feature requests are also welcome via GitHub Issues.
+
+---
+
+## License
+
+MIT — free to use, modify, and distribute.
