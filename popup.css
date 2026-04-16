@@ -357,6 +357,30 @@ body {
   font-style: italic;
 }
 
+/* ======= EDIT SELECT ======= */
+.edit-select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 20px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+  background-size: 14px;
+}
+
+.edit-select option {
+  background: #1e293b;
+  color: var(--text);
+}
+
 /* Phone edit pair */
 .phone-edit-pair {
   display: flex;
@@ -478,4 +502,236 @@ body {
 .empty-state p {
   font-size: 13px;
   margin-top: 6px;
+}
+
+/* ======= TEAM TAB ======= */
+.team-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 0 2px;
+}
+
+.team-count {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-dim);
+}
+
+.btn-add-member {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border: 1px dashed rgba(99, 102, 241, 0.5);
+  background: transparent;
+  color: var(--accent);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-add-member:hover {
+  background: var(--accent-dim);
+  border-style: solid;
+}
+
+.btn-add-member svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ======= MEMBER LIST ======= */
+.member-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ======= MEMBER CARD ======= */
+.member-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--surface);
+  transition: border-color 0.15s ease;
+}
+
+.member-card.expanded {
+  border-color: var(--border-light);
+}
+
+.member-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+}
+
+.member-avatar {
+  width: 26px;
+  height: 26px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.member-name-display {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.member-header-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* Override icon-btn sizing inside member header */
+.member-header-actions .icon-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+}
+
+.member-header-actions .icon-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+.member-fill-btn {
+  color: var(--accent) !important;
+}
+
+.member-fill-btn:hover {
+  background: var(--accent-dim) !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
+}
+
+.member-delete-btn {
+  color: var(--error) !important;
+}
+
+.member-delete-btn:hover {
+  background: var(--error-dim) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  color: var(--error) !important;
+}
+
+/* ======= MEMBER CARD BODY ======= */
+.member-card-body {
+  border-top: 1px solid var(--border);
+  padding: 10px 10px 8px;
+}
+
+.member-card-body .section {
+  margin-bottom: 12px;
+}
+
+.member-card-body .section:last-child {
+  margin-bottom: 0;
+}
+
+/* ======= MEMBER CARD FOOTER ======= */
+.member-card-footer {
+  display: flex;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  margin-top: 10px;
+}
+
+.btn-member-edit {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-member-edit:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.btn-member-edit svg {
+  width: 12px;
+  height: 12px;
+}
+
+.btn-member-save {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 12px;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  background: var(--success-dim);
+  color: var(--success);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-member-save:hover {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+}
+
+.btn-member-save svg {
+  width: 12px;
+  height: 12px;
+}
+
+.btn-member-cancel {
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-member-cancel:hover {
+  border-color: var(--error);
+  color: var(--error);
+  background: var(--error-dim);
 }

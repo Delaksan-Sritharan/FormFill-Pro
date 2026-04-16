@@ -299,6 +299,30 @@ function isFacebook(ctx)  { return has(ctx, 'facebook', ' fb '); }
 function isInstagram(ctx) { return has(ctx, 'instagram', 'insta', ' ig '); }
 function isTikTok(ctx)    { return has(ctx, 'tiktok', 'tik tok', 'tik-tok'); }
 
+function isNIC(ctx) {
+  // Match NIC / national identity fields; avoid collisions with student IDs
+  if (ctx.id === 'nic' || ctx.name === 'nic') return true;
+  return has(ctx,
+    'nic number', 'nic no', 'national identity card', 'national id card',
+    'national id number', 'national identity number', 'national registration',
+    'id card no', 'id card number', 'identity card no', 'identity card number',
+    'national id'
+  ) && !has(ctx, 'student', 'employee', 'member id');
+}
+
+function isGender(ctx) {
+  if (ctx.id === 'gender' || ctx.name === 'gender') return true;
+  return has(ctx, 'gender', ' sex ', 'sex:') && !has(ctx, 'sexual orientation');
+}
+
+function isFoodPreference(ctx) {
+  return has(ctx,
+    'food preference', 'food pref', 'food type', 'meal preference',
+    'meal type', 'dietary', 'diet preference', 'dietary requirement',
+    'dietary preference', 'veg preference', 'meal option'
+  );
+}
+
 // ─── Personal/Team Filler ─────────────────────────────────────────────────────
 
 function fillPersonal(el, ctx, data) {
@@ -312,6 +336,12 @@ function fillPersonal(el, ctx, data) {
   if (isFirstName(ctx)) return setValue(el, splitName(data.fullName).first);
   if (isLastName(ctx))  return setValue(el, splitName(data.fullName).last);
   if (isFullName(ctx))  return setValue(el, data.fullName);
+
+  if (isNIC(ctx)) return setValue(el, data.nic);
+
+  if (isGender(ctx)) return fillGender(el, data.gender);
+
+  if (isFoodPreference(ctx)) return fillFoodPreference(el, data.foodPreference);
 
   if (isUniversityEmail(ctx)) return setValue(el, data.universityEmail);
   if (isEmail(ctx))           return setValue(el, data.personalEmail);
@@ -331,7 +361,35 @@ function fillPersonal(el, ctx, data) {
   if (isLinkedIn(ctx)) return setValue(el, data.linkedin);
   if (isGitHub(ctx))   return setValue(el, data.github);
 
-  return false;
+  return false;}
+
+// Fill a gender field — handles <select> and text inputs
+function fillGender(el, gender) {
+  if (!gender) return false;
+  if (el.tagName === 'SELECT') {
+    // Try exact match first, then abbreviations (M/F)
+    const abbr = gender === 'Male' ? 'm' : 'f';
+    return selectByText(el, gender) ||
+           selectByValue(el, gender.toLowerCase()) ||
+           selectByValue(el, abbr) ||
+           selectByText(el, abbr);
+  }
+  return setValue(el, gender);
+}
+
+// Fill a food preference field — handles <select> and text inputs
+function fillFoodPreference(el, pref) {
+  if (!pref) return false;
+  if (el.tagName === 'SELECT') {
+    // Try stored value, then common short forms
+    const isVeg = pref === 'Vegetarian';
+    return selectByText(el, pref) ||
+           selectByValue(el, pref.toLowerCase()) ||
+           (isVeg  ? selectByText(el, 'veg')     : selectByText(el, 'non-veg'))  ||
+           (isVeg  ? selectByText(el, 'vegetarian') : selectByText(el, 'non vegetarian')) ||
+           (isVeg  ? selectByValue(el, 'veg')    : selectByValue(el, 'non-veg'));
+  }
+  return setValue(el, pref);
 }
 
 // ─── Company Filler ───────────────────────────────────────────────────────────
