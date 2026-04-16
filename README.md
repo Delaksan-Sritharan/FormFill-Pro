@@ -12,7 +12,7 @@ A Chrome extension for quickly filling out competition and event registration fo
 - **Copy per field** — click to copy any value to clipboard instantly
 - **Autofill** — scans the active page and fills matching fields automatically
 - **Smart field detection** — matches by label, placeholder, name, id, and aria attributes
-- **Phone format toggle** — switch between local (`0771234567`) and international (`+94771234567`) per field
+- **Phone auto-derive** — type either local (`0771234567`) or international (`+94771234567`) and the other is filled in automatically; toggle between them in view mode per profile/member
 - **Edit mode** — update and save profile values directly in the popup
 - **Persistent storage** — data syncs across Chrome sessions via `chrome.storage.sync`
 - **Google Forms support** — handles `aria-labelledby` and custom label structures
@@ -51,9 +51,15 @@ A Chrome extension for quickly filling out competition and event registration fo
 | Address | 123 Main St, Colombo |
 | LinkedIn | linkedin.com/in/yourname |
 | GitHub | github.com/yourname |
+| Instagram | instagram.com/yourname |
+| TikTok | tiktok.com/@yourname |
+| YouTube | youtube.com/@yourname |
 
 ### Team
-Same fields as Personal. Supports **unlimited members** — add, edit, and remove members independently. Each member card can be expanded to view fields or collapsed to keep the list tidy. Use the **↑ fill button** on any card to autofill the page with that specific member's data.
+Same fields as Personal. Supports **unlimited members** — add, edit, and remove members independently. Each member card can be expanded to view fields or collapsed to keep the list tidy.
+
+- Use the **↑ fill button** on any card to autofill the page with that specific member's data.
+- The **Autofill** button in the toolbar fills using the first currently expanded member (falls back to Member 1).
 
 ### Company
 | Field | Example |
@@ -93,6 +99,7 @@ Detects the expected format and converts automatically:
 - Field contains "international", "+94", "country code" → uses `+94771234567`
 - Otherwise → uses `0771234567`
 - Standalone country code dropdown → selects `+94`
+- In edit mode, typing either format auto-derives the other (e.g. `0771234567` ↔ `+94771234567`)
 
 ### Email
 - Field contains "university", "student", "institutional", ".ac.", ".edu" → uses university email
@@ -122,7 +129,7 @@ FormFill_Pro/
 ├── manifest.json       # Chrome Extension Manifest V3
 ├── popup.html          # Extension popup shell
 ├── popup.css           # Light theme UI styles
-├── popup.js            # Popup logic — rendering, storage, edit mode
+├── popup.js            # Popup logic — rendering, storage, edit mode, phone auto-derive
 ├── content.js          # Smart autofill engine (injected into pages)
 └── icons/
     ├── icon.svg        # Source SVG
