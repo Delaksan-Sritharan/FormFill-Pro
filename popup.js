@@ -30,8 +30,11 @@ const PERSON_SECTIONS = [
   {
     title: 'Social',
     fields: [
-      { key: 'linkedin', label: 'LinkedIn', placeholder: 'linkedin.com/in/yourname' },
-      { key: 'github',   label: 'GitHub',   placeholder: 'github.com/yourname' },
+      { key: 'linkedin',  label: 'LinkedIn',  placeholder: 'linkedin.com/in/yourname' },
+      { key: 'github',    label: 'GitHub',    placeholder: 'github.com/yourname' },
+      { key: 'instagram', label: 'Instagram', placeholder: 'instagram.com/yourname' },
+      { key: 'tiktok',    label: 'TikTok',    placeholder: 'tiktok.com/@yourname' },
+      { key: 'youtube',   label: 'YouTube',   placeholder: 'youtube.com/@yourname' },
     ],
   },
 ];
@@ -66,6 +69,7 @@ function defaultPerson() {
     phoneLocal: '', phoneInternational: '',
     iitStudentId: '', uowStudentId: '',
     address: '', linkedin: '', github: '',
+    instagram: '', tiktok: '', youtube: '',
   };
 }
 
@@ -169,7 +173,7 @@ function renderStaticTab() {
     html += `<div class="section-title">${section.title}</div>`;
     for (const field of section.fields) {
       if (field.isPhone) {
-        html += renderPhoneRow(data, phoneMode.personal, false, null);
+        html += renderPhoneRow(data, phoneMode.personal, isEditing, null);
       } else {
         html += renderFieldRow(field, data[field.key] || '', isEditing, null);
       }
@@ -198,6 +202,22 @@ function attachStaticListeners() {
       const ev = inp.tagName === 'SELECT' ? 'change' : 'input';
       inp.addEventListener(ev, () => {
         profiles[currentTab][inp.dataset.key] = inp.value;
+        // Auto-derive the other phone format
+        if (inp.dataset.key === 'phoneLocal') {
+          const derived = derivePhone(inp.value, 'intl');
+          if (derived !== null) {
+            profiles[currentTab].phoneInternational = derived;
+            const peer = $content.querySelector('.edit-input[data-key="phoneInternational"]');
+            if (peer) peer.value = derived;
+          }
+        } else if (inp.dataset.key === 'phoneInternational') {
+          const derived = derivePhone(inp.value, 'local');
+          if (derived !== null) {
+            profiles[currentTab].phoneLocal = derived;
+            const peer = $content.querySelector('.edit-input[data-key="phoneLocal"]');
+            if (peer) peer.value = derived;
+          }
+        }
       });
     });
   }
@@ -390,7 +410,25 @@ function attachTeamListeners() {
       const key = inp.dataset.key;
       const ev  = inp.tagName === 'SELECT' ? 'change' : 'input';
       inp.addEventListener(ev, () => {
-        if (mi !== undefined) profiles.team[+mi][key] = inp.value;
+        if (mi !== undefined) {
+          profiles.team[+mi][key] = inp.value;
+          // Auto-derive the other phone format
+          if (key === 'phoneLocal') {
+            const derived = derivePhone(inp.value, 'intl');
+            if (derived !== null) {
+              profiles.team[+mi].phoneInternational = derived;
+              const peer = $content.querySelector(`.edit-input[data-key="phoneInternational"][data-member="${mi}"]`);
+              if (peer) peer.value = derived;
+            }
+          } else if (key === 'phoneInternational') {
+            const derived = derivePhone(inp.value, 'local');
+            if (derived !== null) {
+              profiles.team[+mi].phoneLocal = derived;
+              const peer = $content.querySelector(`.edit-input[data-key="phoneLocal"][data-member="${mi}"]`);
+              if (peer) peer.value = derived;
+            }
+          }
+        }
       });
     });
   }
@@ -665,6 +703,26 @@ function iconChevronUp() {
 }
 function iconEdit() {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+}
+
+// ─── Phone Auto-Derive ────────────────────────────────────────────────────────
+
+/**
+ * Given a local number (e.g. "0713071272"), derive the international form ("+94713071272").
+ * Given an international number (e.g. "+94 71 307 1272"), derive the local form ("0713071272").
+ * Returns null if the input doesn't match a known pattern.
+ */
+function derivePhone(value, targetFormat) {
+  const cleaned = value.replace(/[\s\-().]/g, '');
+  if (targetFormat === 'intl') {
+    // local → intl: strip leading 0, prepend +94
+    if (/^0\d{9}$/.test(cleaned)) return '+94' + cleaned.slice(1);
+  } else {
+    // intl → local: strip country code, prepend 0
+    if (/^\+94\d{9}$/.test(cleaned)) return '0' + cleaned.slice(3);
+    if (/^0094\d{9}$/.test(cleaned)) return '0' + cleaned.slice(4);
+  }
+  return null;
 }
 
 // ─── Utils ────────────────────────────────────────────────────────────────────
