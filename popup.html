@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FormFill Pro</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none">
+            <rect x="3" y="2" width="14" height="16" rx="2" fill="white" fill-opacity="0.2"/>
+            <rect x="3" y="2" width="14" height="16" rx="2" stroke="white" stroke-opacity="0.6" stroke-width="1.2"/>
+            <line x1="6" y1="7" x2="14" y2="7" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="6" y1="10" x2="14" y2="10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <line x1="6" y1="13" x2="10" y2="13" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="brand-name">FormFill Pro</span>
+      </div>
+      <div class="header-controls">
+        <button id="editBtn" class="icon-btn" title="Edit profile">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Tab Bar -->
+    <nav class="tabs">
+      <button class="tab active" data-profile="personal">Personal</button>
+      <button class="tab" data-profile="team">Team</button>
+      <button class="tab" data-profile="company">Company</button>
+    </nav>
+
+    <!-- Profile Content (dynamically rendered by popup.js) -->
+    <div id="profileContent" class="profile-content"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <button id="saveBtn" class="btn-save hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+        Save Changes
+      </button>
+      <button id="autofillBtn" class="btn-autofill">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="5 12 12 5 19 12"/>
+          <line x1="12" y1="5" x2="12" y2="19"/>
+        </svg>
+        Autofill Page
+      </button>
+    </footer>
+
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

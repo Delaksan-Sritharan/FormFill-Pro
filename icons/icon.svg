@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Background -->
+  <rect width="128" height="128" rx="28" fill="#6366f1"/>
+  <!-- Document body -->
+  <rect x="30" y="22" width="68" height="84" rx="8" fill="white" fill-opacity="0.15"/>
+  <rect x="30" y="22" width="68" height="84" rx="8" stroke="white" stroke-opacity="0.5" stroke-width="3" fill="none"/>
+  <!-- Lines (form fields) -->
+  <line x1="44" y1="48" x2="84" y2="48" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  <line x1="44" y1="64" x2="84" y2="64" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  <line x1="44" y1="80" x2="66" y2="80" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  <!-- Checkmark / auto-fill indicator -->
+  <circle cx="90" cy="90" r="22" fill="#6366f1"/>
+  <circle cx="90" cy="90" r="22" stroke="white" stroke-width="2.5" fill="none" fill-opacity="0"/>
+  <polyline points="80,90 87,97 101,83" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>
