@@ -100,6 +100,9 @@ let phoneMode = { personal: 'local', team: {} };
 
 let toastTimer = null;
 
+let isImporting   = false;
+let parsedMembers = [];
+
 // ─── DOM Refs ─────────────────────────────────────────────────────────────────
 
 const $content  = document.getElementById('profileContent');
@@ -226,13 +229,20 @@ function attachStaticListeners() {
 // ─── Team Tab ─────────────────────────────────────────────────────────────────
 
 function renderTeamTab() {
+  if (isImporting) { renderImportUI(); return; }
+
   const count = profiles.team.length;
   let html = `
     <div class="team-header">
       <span class="team-count">${count} member${count !== 1 ? 's' : ''}</span>
-      <button class="btn-add-member" id="addMemberBtn">
-        ${iconPlus()} Add Member
-      </button>
+      <div class="team-header-actions">
+        <button class="btn-import-trigger" id="importMembersBtn">
+          ${iconImport()} Import
+        </button>
+        <button class="btn-add-member" id="addMemberBtn">
+          ${iconPlus()} Add Member
+        </button>
+      </div>
     </div>
     <div class="member-list">`;
 
@@ -304,6 +314,13 @@ function renderMemberBody(member, idx, isEdit, mode) {
 }
 
 function attachTeamListeners() {
+  // Import members
+  document.getElementById('importMembersBtn')?.addEventListener('click', () => {
+    isImporting = true;
+    parsedMembers = [];
+    render();
+  });
+
   // Add member
   document.getElementById('addMemberBtn')?.addEventListener('click', () => {
     profiles.team.push(defaultPerson());
@@ -432,6 +449,188 @@ function attachTeamListeners() {
       });
     });
   }
+}
+
+// ─── Team Import UI ───────────────────────────────────────────────────────────
+
+function renderImportUI() {
+  const previewHtml = parsedMembers.length > 0 ? renderImportPreview() : '';
+  $content.innerHTML = `
+    <div class="import-ui">
+      <div class="import-ui-header">
+        <button class="import-back-btn" id="importBackBtn">
+          ${iconChevronLeft()} Back
+        </button>
+        <span class="import-ui-title">Import Members</span>
+      </div>
+      <p class="import-hint">Paste team data below. Separate members with blank lines.</p>
+      <textarea id="importTextarea" class="import-textarea"
+        placeholder="John&#10;Doe&#10;200012345678&#10;20240001&#10;w2120001&#10;john.20240001@iit.ac.lk&#10;w2120001@westminster.ac.uk&#10;2000/01/15&#10;+94 77 000 0000"></textarea>
+      <button id="parseImportBtn" class="btn-parse-text">Parse Text</button>
+      <div id="importPreview" class="import-preview${parsedMembers.length > 0 ? '' : ' hidden'}">
+        ${previewHtml}
+      </div>
+    </div>`;
+  attachImportListeners();
+}
+
+function renderImportPreview() {
+  if (parsedMembers.length === 0) return '';
+  let html = `<div class="import-preview-count">${parsedMembers.length} member${parsedMembers.length !== 1 ? 's' : ''} found</div>`;
+  parsedMembers.forEach((m, i) => {
+    const meta = [m.universityEmail, m.iitStudentId, m.nic].find(v => v) || 'No details found';
+    html += `
+      <div class="import-preview-item">
+        <div class="import-preview-num">${i + 1}</div>
+        <div class="import-preview-info">
+          <div class="import-preview-name">${esc(m.fullName || '(no name)')}</div>
+          <div class="import-preview-meta">${esc(meta)}</div>
+        </div>
+      </div>`;
+  });
+  html += `
+    <button id="importConfirmBtn" class="btn-import-confirm">
+      ${iconCheck()} Import ${parsedMembers.length} Member${parsedMembers.length !== 1 ? 's' : ''}
+    </button>`;
+  return html;
+}
+
+function attachImportListeners() {
+  document.getElementById('importBackBtn')?.addEventListener('click', () => {
+    isImporting = false;
+    parsedMembers = [];
+    render();
+  });
+
+  document.getElementById('parseImportBtn')?.addEventListener('click', () => {
+    const text = document.getElementById('importTextarea')?.value || '';
+    if (!text.trim()) { showToast('Paste some text first', 'error'); return; }
+    parsedMembers = parseTeamText(text);
+    const preview = document.getElementById('importPreview');
+    if (!preview) return;
+    if (parsedMembers.length === 0) {
+      showToast('No members found — check format', 'error');
+      preview.classList.add('hidden');
+      preview.innerHTML = '';
+      return;
+    }
+    preview.classList.remove('hidden');
+    preview.innerHTML = renderImportPreview();
+    document.getElementById('importConfirmBtn')?.addEventListener('click', doImport);
+    showToast(`${parsedMembers.length} member${parsedMembers.length !== 1 ? 's' : ''} detected`, 'success');
+    preview.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+
+  document.getElementById('importConfirmBtn')?.addEventListener('click', doImport);
+}
+
+function doImport() {
+  if (parsedMembers.length === 0) return;
+  const onlyEmpty = profiles.team.length === 1
+    && !profiles.team[0].fullName && !profiles.team[0].nic && !profiles.team[0].iitStudentId;
+  if (onlyEmpty) profiles.team = [];
+  const startIdx = profiles.team.length;
+  parsedMembers.forEach(m => profiles.team.push(m));
+  for (let i = startIdx; i < profiles.team.length; i++) expandedMembers.add(i);
+  const count = parsedMembers.length;
+  isImporting = false;
+  parsedMembers = [];
+  persist();
+  render();
+  showToast(`${count} member${count !== 1 ? 's' : ''} imported!`, 'success');
+}
+
+// ─── Text Parser ──────────────────────────────────────────────────────────────
+
+function parseTeamText(rawText) {
+  return rawText.trim().split(/\n[ \t]*\n+/)
+    .map(b => b.trim()).filter(b => b.length > 0)
+    .map(parsePersonBlock)
+    .filter(m => m.fullName || m.iitStudentId || m.universityEmail);
+}
+
+function parsePersonBlock(block) {
+  const person = defaultPerson();
+  const lines = block.split('\n').map(line => {
+    line = line.replace(/^\s*\d+[\.\)]\s*/, '');
+    line = line.replace(/[⁠​‌‍ ﻿]/g, '');
+    return line.trim();
+  }).filter(l => l.length > 0);
+
+  const used = new Set();
+
+  for (let i = 0; i < lines.length; i++) {
+    const line  = lines[i];
+    const lower = line.toLowerCase();
+    const phoneClean = line.replace(/[\s\-]/g, '');
+
+    if (lower.includes('@iit.ac.lk')) {
+      const m = line.match(/\.(\d{8})@iit\.ac\.lk$/i);
+      if (m && !person.iitStudentId) person.iitStudentId = m[1];
+      if (!person.universityEmail) person.universityEmail = line.trim();
+      used.add(i);
+    } else if (lower.includes('@westminster.ac.uk')) {
+      const m = line.match(/^([Ww]\d{7})@/);
+      if (m && !person.uowStudentId) person.uowStudentId = m[1];
+      if (!person.universityEmail) person.universityEmail = line.trim();
+      used.add(i);
+    } else if (/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(line)) {
+      if (!person.personalEmail) person.personalEmail = line.trim();
+      used.add(i);
+    } else if (/^[Ww]\d{7}$/.test(line)) {
+      person.uowStudentId = line;
+      used.add(i);
+    } else if (/^\d{12}$/.test(line)) {
+      person.nic = line;
+      used.add(i);
+    } else if (/^\d{8}$/.test(line)) {
+      if (!person.iitStudentId) person.iitStudentId = line;
+      used.add(i);
+    } else if (/^(\+94|0094)\d{9}$/.test(phoneClean)) {
+      const digits = phoneClean.startsWith('+94') ? phoneClean.slice(3) : phoneClean.slice(4);
+      person.phoneInternational = line.trim();
+      person.phoneLocal = '0' + digits;
+      used.add(i);
+    } else if (/^0\d{9}$/.test(phoneClean)) {
+      person.phoneLocal = phoneClean;
+      person.phoneInternational = '+94' + phoneClean.slice(1);
+      used.add(i);
+    } else if (/^\d{4}[\/\.]\d{1,2}[\/\.]\d{1,2}$/.test(line) || /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(line)) {
+      person.dob = normalizeDob(line);
+      used.add(i);
+    } else if (lower.includes('linkedin.com')) {
+      person.linkedin = line;
+      used.add(i);
+    } else if (lower.includes('github.com')) {
+      person.github = line;
+      used.add(i);
+    } else if (lower.includes('instagram.com')) {
+      person.instagram = line;
+      used.add(i);
+    }
+  }
+
+  const nameLines = lines.filter((_, i) => !used.has(i));
+  if (nameLines.length >= 2) {
+    person.fullName = nameLines[0] + ' ' + nameLines[1];
+  } else if (nameLines.length === 1) {
+    person.fullName = nameLines[0];
+  }
+  return person;
+}
+
+function normalizeDob(str) {
+  let m = str.match(/^(\d{4})[\/\.](\d{1,2})[\/\.](\d{1,2})$/);
+  if (m) {
+    const [, y, mo, d] = m;
+    return `${d.padStart(2,'0')}/${mo.padStart(2,'0')}/${y}`;
+  }
+  m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m) {
+    const [, d, mo, y] = m;
+    return `${d.padStart(2,'0')}/${mo.padStart(2,'0')}/${y}`;
+  }
+  return str;
 }
 
 function collectMemberValues(idx) {
@@ -703,6 +902,12 @@ function iconChevronUp() {
 }
 function iconEdit() {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+}
+function iconImport() {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+}
+function iconChevronLeft() {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>`;
 }
 
 // ─── Phone Auto-Derive ────────────────────────────────────────────────────────

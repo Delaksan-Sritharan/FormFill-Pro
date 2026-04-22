@@ -562,6 +562,230 @@ body {
   height: 12px;
 }
 
+/* Team header button group */
+.team-header-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.btn-import-trigger {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.14s ease;
+  letter-spacing: -0.1px;
+}
+
+.btn-import-trigger:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.btn-import-trigger svg {
+  width: 11px;
+  height: 11px;
+}
+
+/* ======= IMPORT UI ======= */
+.import-ui {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.import-ui-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.import-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.import-back-btn:hover {
+  border-color: var(--border-dark);
+  color: var(--text);
+}
+
+.import-back-btn svg {
+  width: 11px;
+  height: 11px;
+}
+
+.import-ui-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+.import-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.import-textarea {
+  width: 100%;
+  height: 180px;
+  padding: 10px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 12px;
+  font-family: ui-monospace, 'SF Mono', 'Fira Code', monospace;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+.import-textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+}
+
+.import-textarea::placeholder {
+  color: var(--text-dim);
+  font-style: italic;
+  font-family: inherit;
+}
+
+.btn-parse-text {
+  width: 100%;
+  padding: 9px;
+  border: 1.5px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.btn-parse-text:hover {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.import-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.import-preview.hidden {
+  display: none;
+}
+
+.import-preview-count {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-dim);
+  padding: 0 2px;
+}
+
+.import-preview-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.import-preview-num {
+  width: 22px;
+  height: 22px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.import-preview-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.import-preview-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.import-preview-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-import-confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px;
+  border: 1.5px solid var(--success);
+  background: var(--success-bg);
+  color: var(--success);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.14s ease;
+  margin-top: 2px;
+}
+
+.btn-import-confirm:hover {
+  background: var(--success);
+  color: #ffffff;
+}
+
+.btn-import-confirm svg {
+  width: 13px;
+  height: 13px;
+}
+
 /* ======= MEMBER LIST ======= */
 .member-list {
   display: flex;
